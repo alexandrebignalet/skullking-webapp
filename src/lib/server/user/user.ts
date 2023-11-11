@@ -1,11 +1,9 @@
-import type { Either } from 'fp-ts/Either';
 import { flatMap, left, right } from 'fp-ts/Either';
 import { pipe } from 'fp-ts/function';
 import {
 	BACKEND_AUTH_COOKIE_NAME,
 	BACKEND_USER_ID_PREFIX
 } from '$lib/server/authentication/authentication';
-import type { Cookies } from '@sveltejs/kit';
 
 export const WEBAPP_AUTH_COOKIE_NAME = BACKEND_AUTH_COOKIE_NAME;
 
@@ -15,9 +13,6 @@ export type User = {
 };
 
 export type UserError = { code: 'USER_NOT_FOUND'; message: string };
-
-export const fromCookies = (cookies: Cookies): Either<UserError, User> =>
-	pipe(cookies.get(WEBAPP_AUTH_COOKIE_NAME), fromCookie);
 
 export const fromCookie = (cookie: string | undefined) =>
 	pipe(

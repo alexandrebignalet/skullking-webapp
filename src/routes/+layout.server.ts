@@ -1,14 +1,13 @@
 import { pipe } from 'fp-ts/function';
 import type { User } from '$lib/server/user/user';
-import { fromCookies } from '$lib/server/user/user';
 
 import { isRight, map } from 'fp-ts/Either';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ cookies, url }: ServerLoadEvent) => {
+export const load = async ({ locals, url }: ServerLoadEvent) => {
 	const response = pipe(
-		fromCookies(cookies),
+		locals.user,
 		map((user: User): { user: User } => ({ user }))
 	);
 

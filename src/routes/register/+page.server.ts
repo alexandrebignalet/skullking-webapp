@@ -3,7 +3,6 @@ import { isRight } from 'fp-ts/Either';
 import { principalName } from '$lib/server/authentication/authentication';
 import type { RequestEvent, ServerLoadEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
-import { fromCookies } from '$lib/server/user/user';
 
 export const actions = {
 	default: async ({ cookies, request }: RequestEvent) => {
@@ -25,10 +24,8 @@ export const actions = {
 	}
 };
 
-export const load = async ({ cookies }: ServerLoadEvent) => {
-	const user = fromCookies(cookies);
-
-	if (isRight(user)) {
+export const load = async ({ locals }: ServerLoadEvent) => {
+	if (isRight(locals.user)) {
 		throw redirect(302, '/');
 	}
 
