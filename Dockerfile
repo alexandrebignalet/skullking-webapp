@@ -1,8 +1,6 @@
 # This dockerfile must be built with the monorepo root directory as cwd
 FROM node:lts-alpine
 
-RUN npm i -g pnpm@latest
-
 # all files needed for the build
 COPY package.json .
 COPY package-lock.json .
