@@ -28,10 +28,3 @@
 <main>
   <slot />
 </main>
-
-<aside>
-  <h2>More posts</h2>
-  <ul>
-
-  </ul>
-</aside>

@@ -3,11 +3,17 @@
   import { getContext } from "svelte";
   import type { Room } from "$lib/domain/room";
   import { isCreator, isInRoom } from "$lib/domain/room";
+  import type { User } from "$lib/server/user/user";
 
   export let data: Awaited<ReturnType<typeof load>>;
   export let createFormResult: Awaited<ReturnType<typeof actions.create>> | undefined;
+  export let addBotFormResult: Awaited<ReturnType<typeof actions.bots>> | undefined;
+  export let joinFormResult: Awaited<ReturnType<typeof actions.join>> | undefined;
+  export let launchFormResult: Awaited<ReturnType<typeof actions.launch>> | undefined;
 
-  const currentUser = getContext("user");
+  const forms = [createFormResult, addBotFormResult, joinFormResult, launchFormResult];
+
+  const currentUser: User = getContext("user");
 
   const isCurrentUserInRoom = (room: Room) => isInRoom($currentUser, room);
 
@@ -19,7 +25,7 @@
     return isInRoom($currentUser, room) && !room.isFull && !room.isStarted;
   };
   const isCurrentUserCreator = (room: Room) => isCreator($currentUser, room);
-  const canEnter = (room: Room) => isCurrentUserInRoom(room) && room.isStarted;
+  const canEnter = (room: Room): room is Room & { gameId: string } => isCurrentUserInRoom(room) && room.isStarted && !!room.gameId;
   const canLaunch = (room: Room) => isCurrentUserInRoom(room) && !room.isStarted && room.users.length > 1 && isCurrentUserCreator(room);
 </script>
 
@@ -29,11 +35,11 @@
     <p>{data.error}</p>
   {:else}
 
-    {#if createFormResult && !createFormResult.success}
-      {createFormResult.error}
-    {:else if createFormResult && createFormResult.success}
-      Room created !
-    {/if}
+    {#each forms as form}
+      {#if form && !form.success}
+        <p>{form.error}</p>
+      {/if}
+    {/each}
 
     <p>Welcome {$currentUser.userName}</p>
 
@@ -78,7 +84,7 @@
               {/if}
 
               {#if canEnter(room)}
-                <a href={`/skullking/${room.id}`}>enter</a>
+                <a href={`/skullKing/${room.gameId}`}>enter</a>
               {/if}
             </div>
           </div>
