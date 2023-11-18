@@ -1,5 +1,5 @@
-import type { Either } from 'fp-ts/Either';
-import { left, right } from 'fp-ts/Either';
+import type { Either } from 'fp-ts/lib/Either';
+import { left, right } from 'fp-ts/lib/Either';
 import type { User } from '$lib/server/user/user';
 
 export type BackendAuth = string;

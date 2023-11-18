@@ -1,5 +1,5 @@
-import { flatMap, left, right } from 'fp-ts/Either';
-import { pipe } from 'fp-ts/function';
+import { flatMap, left, right } from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
 import {
 	BACKEND_AUTH_COOKIE_NAME,
 	BACKEND_USER_ID_PREFIX

@@ -1,6 +1,6 @@
-import { pipe } from 'fp-ts/function';
+import { pipe } from 'fp-ts/lib/function';
 import type { TaskEither } from 'fp-ts/TaskEither';
-import * as TE from 'fp-ts/TaskEither';
+import * as TE from 'fp-ts/lib/TaskEither';
 
 import type { ApiError } from '$lib/server/api/api';
 import {

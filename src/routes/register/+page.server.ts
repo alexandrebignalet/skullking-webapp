@@ -1,5 +1,5 @@
 import { AuthenticationRepository } from '$lib/server/authentication/authentication.repository.server';
-import { isRight } from 'fp-ts/Either';
+import { isRight } from 'fp-ts/lib/Either';
 import { principalName } from '$lib/server/authentication/authentication';
 import type { RequestEvent, ServerLoadEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';

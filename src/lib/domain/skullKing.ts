@@ -6,49 +6,38 @@ export const skullKingPhases = {
 	CARDS: 'CARDS'
 } as const;
 
-export const cardTypes = {
-	ESCAPE: 'ESCAPE',
-	MERMAID: 'MERMAID',
-	COLORED: 'COLORED',
-	PIRATE: 'PIRATE',
-	SCARY_MARY: 'SCARY_MARY',
-	SKULLKING: 'SKULLKING',
-	KRAKEN: 'KRAKEN',
-	WHITE_WHALE: 'WHITE_WHALE',
-	BUTIN: 'BUTIN'
-} as const;
-
 export const scaryMaryUsages = {
-	[cardTypes.PIRATE]: cardTypes.PIRATE,
-	[cardTypes.ESCAPE]: cardTypes.ESCAPE,
+	PIRATE: 'PIRATE',
+	ESCAPE: 'ESCAPE',
 	NOT_SET: 'NOT_SET'
 } as const;
 
 export type ScaryMaryUsage = ValuesOf<typeof scaryMaryUsages>;
 
-export const card = z.object({
-	id: z.string().nullable(),
-	type: z.nativeEnum(cardTypes),
-	value: z.number().nullable(),
-	color: z.string().nullable(),
-	usage: z.string().nullable(),
-	name: z.string().nullable()
-});
+export const card = z
+	.object({
+		id: z.string()
+	})
+	.transform(({ id }) => id);
 
 const playerId = z.string();
 const roundNb = z.number();
 
-export const player = z.object({
-	id: playerId,
-	name: z.string(),
-	gameId: z.string(),
-	cards: z.array(card)
-});
+export const player = z
+	.object({
+		id: playerId,
+		name: z.string(),
+		gameId: z.string(),
+		cards: z.array(card)
+	})
+	.transform(({ cards, ...rest }) => ({ cardIds: cards, ...rest }));
 
-export const play = z.object({
-	playerId,
-	card: card
-});
+export const play = z
+	.object({
+		playerId,
+		card
+	})
+	.transform(({ card, playerId }) => ({ cardId: card, playerId }));
 
 export const roundScore = z.object({
 	announced: z.number(),
@@ -58,8 +47,11 @@ export const roundScore = z.object({
 	score: z.number()
 });
 
+const skullKingId = z.string();
+export type SkullKingId = z.infer<typeof skullKingId>;
+
 export const skullKingSchema = z.object({
-	id: z.string(),
+	id: skullKingId,
 	players: z.array(player),
 	roundNb,
 	fold: z.array(play),

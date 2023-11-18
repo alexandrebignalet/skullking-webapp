@@ -1,8 +1,8 @@
 import type { AuthenticationError } from '$lib/server/authentication/authentication';
 import { backendAuthCookieFrom } from '$lib/server/authentication/authentication';
-import type { Either } from 'fp-ts/Either';
-import { flatMap } from 'fp-ts/Either';
-import { pipe } from 'fp-ts/function';
+import type { Either } from 'fp-ts/lib/Either';
+import { flatMap } from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
 import type { User, UserError } from '$lib/server/user/user';
 import { fromCookie } from '$lib/server/user/user';
 

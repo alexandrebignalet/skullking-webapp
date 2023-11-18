@@ -1,7 +1,7 @@
-import { pipe } from 'fp-ts/function';
+import { pipe } from 'fp-ts/lib/function';
 import type { User } from '$lib/server/user/user';
 
-import { isRight, map } from 'fp-ts/Either';
+import { isRight, map } from 'fp-ts/lib/Either';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 

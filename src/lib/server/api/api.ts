@@ -1,8 +1,8 @@
-import type { Either } from 'fp-ts/Either';
-import * as E from 'fp-ts/Either';
-import * as TE from 'fp-ts/TaskEither';
+import type { Either } from 'fp-ts/lib/Either';
+import * as E from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither';
 import type { z, ZodType } from 'zod';
-import { pipe } from 'fp-ts/function';
+import { pipe } from 'fp-ts/lib/function';
 
 export type NetworkError = { code: 'NETWORK_ERROR'; reason: unknown };
 export type ApiFailureError = { code: 'API_FAILURE'; reason: unknown; expectedStatusCode: number };

@@ -6,12 +6,12 @@
   import type { User } from "$lib/server/user/user";
 
   export let data: Awaited<ReturnType<typeof load>>;
-  export let createFormResult: Awaited<ReturnType<typeof actions.create>> | undefined;
-  export let addBotFormResult: Awaited<ReturnType<typeof actions.bots>> | undefined;
-  export let joinFormResult: Awaited<ReturnType<typeof actions.join>> | undefined;
-  export let launchFormResult: Awaited<ReturnType<typeof actions.launch>> | undefined;
-
-  const forms = [createFormResult, addBotFormResult, joinFormResult, launchFormResult];
+  export let form: Awaited<ReturnType<
+    typeof actions.create
+    | typeof actions.bots
+    | typeof actions.join
+    | typeof actions.launch
+  >> | undefined;
 
   const currentUser: User = getContext("user");
 
@@ -25,7 +25,9 @@
     return isInRoom($currentUser, room) && !room.isFull && !room.isStarted;
   };
   const isCurrentUserCreator = (room: Room) => isCreator($currentUser, room);
-  const canEnter = (room: Room): room is Room & { gameId: string } => isCurrentUserInRoom(room) && room.isStarted && !!room.gameId;
+  const canEnter = (room: Room): room is Room & {
+    gameId: string
+  } => isCurrentUserInRoom(room) && room.isStarted && !!room.gameId;
   const canLaunch = (room: Room) => isCurrentUserInRoom(room) && !room.isStarted && room.users.length > 1 && isCurrentUserCreator(room);
 </script>
 
@@ -35,11 +37,10 @@
     <p>{data.error}</p>
   {:else}
 
-    {#each forms as form}
-      {#if form && !form.success}
-        <p>{form.error}</p>
-      {/if}
-    {/each}
+
+    {#if form && !form.success}
+      <p>{form.error}</p>
+    {/if}
 
     <p>Welcome {$currentUser.userName}</p>
 
