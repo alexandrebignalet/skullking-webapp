@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { User } from '$lib/server/user/user';
 
 const gameUserTypes = {
 	REAL: 'REAL',
@@ -25,8 +24,3 @@ export const gameRoomSchema = z.object({
 });
 
 export type Room = z.infer<typeof gameRoomSchema>;
-
-const isInRoom = (user: User, room: Room) => room.users.some((roomUser) => roomUser.id === user.id);
-const isCreator = (user: User, room: Room) => room.creator === user.id;
-
-export { isInRoom, isCreator };

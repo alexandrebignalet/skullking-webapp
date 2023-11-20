@@ -12,7 +12,8 @@ const eventTypes = {
 const gameStarted = z
 	.object({
 		gameId: z.string(),
-		type: z.literal(eventTypes.GAME_FINISHED)
+		type: z.literal(eventTypes.GAME_FINISHED),
+		version: z.number()
 	})
 	.transform(({ gameId, ...rest }) => ({ skullId: gameId, ...rest }));
 
@@ -24,7 +25,8 @@ const cardPlayed = z
 			id: z.string()
 		}),
 		isLastFoldPlay: z.boolean(),
-		type: z.literal(eventTypes.CARD_PLAYED)
+		type: z.literal(eventTypes.CARD_PLAYED),
+		version: z.number()
 	})
 	.transform(({ gameId, card, ...rest }) => ({
 		skullId: gameId,
@@ -38,7 +40,8 @@ const foldSettled = z
 		winnerPlayerId: z.string(),
 		bonus: z.number(),
 		won: z.boolean(),
-		type: z.literal(eventTypes.FOLD_SETTLED)
+		type: z.literal(eventTypes.FOLD_SETTLED),
+		version: z.number()
 	})
 	.transform(({ gameId, ...rest }) => ({
 		skullId: gameId,
@@ -52,7 +55,8 @@ const playerAnnounced = z
 		roundNb: z.number(),
 		announce: z.number(),
 		isLast: z.boolean(),
-		type: z.literal(eventTypes.PLAYER_ANNOUNCED)
+		type: z.literal(eventTypes.PLAYER_ANNOUNCED),
+		version: z.number()
 	})
 	.transform(({ gameId, ...rest }) => ({
 		skullId: gameId,
@@ -63,7 +67,8 @@ const roundFinished = z
 	.object({
 		gameId: z.string(),
 		roundNb: z.number(),
-		type: z.literal(eventTypes.ROUND_FINISHED)
+		type: z.literal(eventTypes.ROUND_FINISHED),
+		version: z.number()
 	})
 	.transform(({ gameId, ...rest }) => ({
 		skullId: gameId,
@@ -71,7 +76,8 @@ const roundFinished = z
 	}));
 
 const gameFinished = z.object({
-	type: z.literal(eventTypes.GAME_FINISHED)
+	type: z.literal(eventTypes.GAME_FINISHED),
+	version: z.number()
 });
 
 export const skullKingEventSchema = z.union([
@@ -83,3 +89,9 @@ export const skullKingEventSchema = z.union([
 	gameFinished
 ]);
 export type SkullKingEvent = z.infer<typeof skullKingEventSchema>;
+
+export type CardPlayed = z.infer<typeof cardPlayed>;
+export const isCardPlayed = (e: SkullKingEvent): e is CardPlayed => e.type === 'card_played';
+
+export type FoldSettled = z.infer<typeof foldSettled>;
+export const isFoldSettled = (e: SkullKingEvent): e is FoldSettled => e.type === 'fold_settled';
