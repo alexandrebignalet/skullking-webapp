@@ -62,14 +62,15 @@ const create = (user: User): TaskEither<ApiError, void> => {
 	);
 };
 
-const addBot = (user: User, roomId: string): TaskEither<ApiError, void> => {
+const addBot = (user: User, roomId: string, strategy: string): TaskEither<ApiError, void> => {
 	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/game_rooms/${roomId}/bots`, {
 			method: 'POST',
+			body: JSON.stringify({ strategy }),
 			headers: {
-				Accept: 'application/json',
+				'Content-Type': 'application/json',
 				Cookie: `${BACKEND_AUTH_COOKIE_NAME}=${principalName(user)}`
 			}
 		});
@@ -77,7 +78,7 @@ const addBot = (user: User, roomId: string): TaskEither<ApiError, void> => {
 	return pipe(
 		httpRequest,
 		httpCall,
-		TE.flatMapEither(validateStatusCodeIsOrFail(200)),
+		TE.flatMapEither(validateStatusCodeIsOrFail(204)),
 		TE.map(() => undefined)
 	);
 };

@@ -1,5 +1,4 @@
 import { Rooms } from '$lib/server/room/room.repository.server';
-import type { TaskEither } from 'fp-ts/TaskEither';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
 import type { RequestEvent, ServerLoadEvent } from '@sveltejs/kit';
@@ -7,8 +6,13 @@ import type { Room } from '$lib/domain/room';
 import { of } from 'fp-ts/lib/Task';
 import { queryInvocation } from '$lib/query-invocation';
 import { commandInvocation } from '$lib/command-invocation';
+import type { Either } from 'fp-ts/lib/Either';
+import * as E from 'fp-ts/lib/Either';
 
-type QueryResponse = { rooms: Room[]; error?: string };
+type QueryResponse = {
+	rooms: Room[];
+	error?: string;
+};
 export const load = async ({ locals }: ServerLoadEvent): Promise<QueryResponse> =>
 	pipe(
 		queryInvocation('rooms', locals, Rooms.get),
@@ -24,15 +28,16 @@ export const actions = {
 	bots: async ({ locals, request }: RequestEvent) =>
 		commandInvocation('bots', locals, (user) =>
 			pipe(
-				extractRoomId(request),
-				TE.flatMap((roomId) => Rooms.addBot(user, roomId))
+				extractAddBotRequest(request),
+				TE.flatMap(({ roomId, strategy }) => Rooms.addBot(user, roomId, strategy))
 			)
 		),
 
 	join: async ({ locals, request }: RequestEvent) =>
 		commandInvocation('join', locals, (user) =>
 			pipe(
-				extractRoomId(request),
+				extractFormData(request),
+				TE.flatMapEither((formData) => extractRoomId(formData)),
 				TE.flatMap((roomId) => Rooms.join(user, roomId))
 			)
 		),
@@ -40,25 +45,46 @@ export const actions = {
 	launch: async ({ locals, request }: RequestEvent) =>
 		commandInvocation('launch', locals, (user) =>
 			pipe(
-				extractRoomId(request),
+				extractFormData(request),
+				TE.flatMapEither((formData) => extractRoomId(formData)),
 				TE.flatMap((roomId) => Rooms.launch(user, roomId))
 			)
 		)
 };
 
-const extractRoomId = (request: Request): TaskEither<string, string> =>
-	pipe(
-		TE.tryCatch(
-			() => request.formData(),
-			(error) => {
-				console.error(error);
-				return `Could not parse form data; ${error} ${JSON.stringify(request)}`;
-			}
-		),
-		TE.map((formData) => formData.get('roomId')),
-		TE.flatMap((formValue) =>
-			!!formValue && typeof formValue === 'string'
-				? TE.right(formValue)
-				: TE.left(`Could not parse roomId from form data; ${formValue}`)
+function extractFormData(request: Request) {
+	return TE.tryCatch(
+		() => request.formData(),
+		(error) => {
+			console.error(error);
+			return `Could not parse form data; ${error} ${JSON.stringify(request)}`;
+		}
+	);
+}
+
+const extractAddBotRequest = (request: Request) => {
+	return pipe(
+		extractFormData(request),
+		TE.flatMapEither((formData) =>
+			pipe(
+				E.Do,
+				E.apS('roomId', extractRoomId(formData)),
+				E.apS('strategy', extractStrategy(formData))
+			)
 		)
 	);
+};
+
+const extractStrategy = (formData: FormData): Either<string, string> => {
+	const formValue = formData.get('strategy');
+	return !!formValue && typeof formValue === 'string'
+		? E.right(formValue)
+		: E.left(`Could not parse strategy from form data; ${formValue}`);
+};
+
+const extractRoomId = (formData: FormData): Either<string, string> => {
+	const formValue = formData.get('roomId');
+	return !!formValue && typeof formValue === 'string'
+		? E.right(formValue)
+		: E.left(`Could not parse roomId from form data; ${formValue}`);
+};

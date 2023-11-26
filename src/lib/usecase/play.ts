@@ -2,7 +2,7 @@ import { commandInvocation } from '$lib/command-invocation';
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { SkullKings } from '$lib/server/skullKing/skullKing.repository.server';
-import type { Either } from 'fp-ts/Either';
+import type { Either } from 'fp-ts/lib/Either';
 import * as E from 'fp-ts/lib/Either';
 import type { ScaryMaryUsage } from '$lib/domain/skullKing';
 import { scaryMaryUsages } from '$lib/domain/skullKing';
