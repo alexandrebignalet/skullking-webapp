@@ -1,25 +1,25 @@
 <script lang="ts">
-    import type { load as skullKingLoad } from "./+page.server";
-    import type { load as layoutLoad } from "../../+layout.server";
-    import { onMount } from "svelte";
-    import type { SkullKing } from "$lib/domain/skullKing";
-    import { skullKingPhases } from "$lib/domain/skullKing";
-    import { writable } from "svelte/store";
-    import type { CommandResult } from "$lib/command-invocation";
-    import { invalidate } from "$app/navigation";
-    import type { SkullKingEvent } from "$lib/domain/events";
-    import { skullKingEventSchema } from "$lib/domain/events";
-    import {
-        animationTimeouts,
-        resolveSkullKingUiStateTransition,
-        skullKingUiStateReducerBuildersByTransition
-    } from "$lib/ui/skullKing/skull-king-ui-state";
-    import { browser } from "$app/environment";
-    import type { TimeoutableError } from "$lib/ui/error/timeoutable-error";
-    import { eventStore } from "$lib/ui/skullKing/event-store";
-    import { errorStore } from "$lib/ui/error/error-store";
+  import type { load as skullKingLoad } from "./+page.server";
+  import type { load as layoutLoad } from "../../+layout.server";
+  import { onMount } from "svelte";
+  import type { SkullKing } from "$lib/domain/skullKing";
+  import { skullKingPhases } from "$lib/domain/skullKing";
+  import { writable } from "svelte/store";
+  import type { CommandResult } from "$lib/command-invocation";
+  import { invalidate } from "$app/navigation";
+  import type { SkullKingEvent } from "$lib/domain/events";
+  import { skullKingEventSchema } from "$lib/domain/events";
+  import {
+    animationTimeouts,
+    resolveSkullKingUiStateTransition,
+    skullKingUiStateReducerBuildersByTransition
+  } from "$lib/ui/skullKing/skull-king-ui-state";
+  import { browser } from "$app/environment";
+  import type { TimeoutableError } from "$lib/ui/error/timeoutable-error";
+  import { eventStore } from "$lib/ui/skullKing/event-store";
+  import { errorStore } from "$lib/ui/error/error-store";
 
-    export let data: Awaited<ReturnType<typeof skullKingLoad>> & Awaited<ReturnType<typeof layoutLoad>>;
+  export let data: Awaited<ReturnType<typeof skullKingLoad>> & Awaited<ReturnType<typeof layoutLoad>>;
 
   const currentUser = data.user;
 
@@ -80,13 +80,12 @@
       console.log("connected");
     });
 
-    ws.addEventListener("close", () => {
-      window.location.reload();
+    ws.addEventListener("close", (err) => {
+      console.log("close", err);
     });
 
     ws.addEventListener("error", (err) => {
       console.log("error", err);
-      window.location.reload();
     });
 
     ws.addEventListener("message", ({ data: rawEvent }: {
