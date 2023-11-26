@@ -62,3 +62,23 @@ export const skullKingSchema = z.object({
 });
 
 export type SkullKing = z.infer<typeof skullKingSchema>;
+
+type Winner = {
+	playerId: string;
+	score: number;
+	name: string;
+};
+
+export const winner = (skullKing: SkullKing): Winner => {
+	const winner = Object.entries(skullKing.scoreBoard)
+		.map(([playerId, scores]) => ({
+			playerId,
+			score: scores.reduce((acc, score) => acc + score.score, 0)
+		}))
+		.reduce((acc, score) => (acc.score > score.score ? acc : score), { playerId: '', score: 0 });
+
+	return {
+		...winner,
+		name: skullKing.players.find((player) => player.id === winner.playerId)?.name ?? ''
+	};
+};

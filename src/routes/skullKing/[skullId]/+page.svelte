@@ -18,6 +18,7 @@
   import type { TimeoutableError } from "$lib/ui/error/timeoutable-error";
   import { eventStore } from "$lib/ui/skullKing/event-store";
   import { errorStore } from "$lib/ui/error/error-store";
+  import ScoreBoard from "$lib/ui/skullKing/ScoreBoard.svelte";
 
   export let data: Awaited<ReturnType<typeof skullKingLoad>> & Awaited<ReturnType<typeof layoutLoad>>;
 
@@ -66,12 +67,8 @@
   $: currentUserPlayer = skullKingState.players.find(player => player.id === currentUser?.id);
   $: currentPlayerCardsCount = (currentUserPlayer?.cardIds.length || 0) + 1;
   $: announceValues = [...new Array(currentPlayerCardsCount).keys()];
-
-  $: roundsPlayed = skullKingState.scoreBoard[currentUser?.id].length;
-  $: roundsPlayedRange = [...new Array(roundsPlayed).keys()];
-
+  
   const playerName = (playerId: string) => skullKingState.players.find(player => player.id === playerId)?.name;
-  const cumulatedScoreOf = (playerId: string, roundNb: number) => skullKingState.scoreBoard[playerId].filter((rs) => rs.roundNb <= roundNb).reduce((acc, roundScore) => acc + roundScore.score, 0);
 
   onMount(() => {
     const ws = new WebSocket(`${data.wsBaseUrl}/skullKing/${data.skullKing.id}/subscribe`);
@@ -202,33 +199,5 @@
       </li>
     {/each}
   </ul>
-
-  <table>
-    <thead>
-    <tr>
-      <th>Round/Player</th>
-      {#each Object.keys(skullKingState.scoreBoard) as playerId}
-        <th>{playerName(playerId)}</th>
-      {/each}
-    </tr>
-    </thead>
-    <tbody>
-    {#each roundsPlayedRange as round}
-      <tr>
-        <td>{round + 1}</td>
-        {#each Object.keys(skullKingState.scoreBoard) as playerId}
-          <th>
-            {cumulatedScoreOf(playerId, round + 1)} -
-            ({skullKingState.scoreBoard[playerId].find((roundScore) => roundScore.roundNb === round + 1)?.announced}
-            |
-            {skullKingState.scoreBoard[playerId].find((roundScore) => roundScore.roundNb === round + 1)?.done}
-            |
-            {skullKingState.scoreBoard[playerId].find((roundScore) => roundScore.roundNb === round + 1)?.potentialBonus}
-            )
-          </th>
-        {/each}
-      </tr>
-    {/each}
-    </tbody>
-  </table>
+  <ScoreBoard skullKing={skullKingState} />
 </main>
