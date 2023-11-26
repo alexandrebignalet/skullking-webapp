@@ -16,9 +16,10 @@ import { BACKEND_AUTH_COOKIE_NAME, principalName } from '$lib/server/authenticat
 import type { Room } from '$lib/domain/room';
 import { gameRoomSchema } from '$lib/domain/room';
 import type { SkullKingId } from '$lib/domain/skullKing';
+import { env } from '$env/dynamic/private';
 
 const get = (user: User): TaskEither<ApiError, Room[]> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/game_rooms`, {
@@ -39,7 +40,7 @@ const get = (user: User): TaskEither<ApiError, Room[]> => {
 };
 
 const create = (user: User): TaskEither<ApiError, void> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/game_rooms`, {
@@ -63,7 +64,7 @@ const create = (user: User): TaskEither<ApiError, void> => {
 };
 
 const addBot = (user: User, roomId: string, strategy: string): TaskEither<ApiError, void> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/game_rooms/${roomId}/bots`, {
@@ -84,7 +85,7 @@ const addBot = (user: User, roomId: string, strategy: string): TaskEither<ApiErr
 };
 
 const join = (user: User, roomId: string): TaskEither<ApiError, void> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/game_rooms/${roomId}/join`, {
@@ -108,7 +109,7 @@ const launchResponseSchema = z.object({
 });
 
 const launch = (user: User, roomId: string): TaskEither<ApiError, SkullKingId> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/game_rooms/${roomId}/launch`, {
 			method: 'POST',

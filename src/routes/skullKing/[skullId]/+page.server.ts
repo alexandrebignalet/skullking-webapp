@@ -6,6 +6,7 @@ import { redirect } from '@sveltejs/kit';
 import { SkullKings } from '$lib/server/skullKing/skullKing.repository.server';
 import { pipe } from 'fp-ts/lib/function';
 import { queryInvocation } from '$lib/query-invocation';
+import { env } from '$env/dynamic/private';
 
 export const load = async ({ locals, params, depends }: ServerLoadEvent) => {
 	depends('skullKing');
@@ -22,7 +23,7 @@ export const load = async ({ locals, params, depends }: ServerLoadEvent) => {
 	}
 
 	const skullKing = response.right;
-	const apiBaseUrl: string = import.meta.env.VITE_API_BASE_URL;
-	const wsBaseUrl: string = import.meta.env.VITE_WS_BASE_URL;
+	const apiBaseUrl: string = env.VITE_API_BASE_URL;
+	const wsBaseUrl: string = env.VITE_WS_BASE_URL;
 	return { skullKing, apiBaseUrl, wsBaseUrl };
 };

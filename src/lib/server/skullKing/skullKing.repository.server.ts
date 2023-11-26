@@ -17,9 +17,10 @@ import type { ScaryMaryUsage, SkullKing } from '$lib/domain/skullKing';
 import { skullKingSchema } from '$lib/domain/skullKing';
 import type { DomainError } from '$lib/domain/domain-error';
 import { domainErrorSchema } from '$lib/domain/domain-error';
+import { env } from '$env/dynamic/private';
 
 const get = (user: User, skullId: string): TaskEither<ApiError, SkullKing> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/games/${skullId}`, {
@@ -40,7 +41,7 @@ const get = (user: User, skullId: string): TaskEither<ApiError, SkullKing> => {
 };
 
 const announce = (user: User, skullId: string, announce: number): TaskEither<ApiError, void> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/games/${skullId}/players/${user.id}/announce`, {
@@ -66,7 +67,7 @@ const play = (
 	cardId: string,
 	scaryMaryUsage: ScaryMaryUsage
 ): TaskEither<ApiError | DomainError, void> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 
 	const httpRequest = () =>
 		fetch(`${apiBaseUrl}/skullking/games/${skullId}/players/${user.id}/play`, {

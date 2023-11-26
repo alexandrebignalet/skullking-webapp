@@ -5,11 +5,12 @@ import { flatMap } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import type { User, UserError } from '$lib/server/user/user';
 import { fromCookie } from '$lib/server/user/user';
+import { env } from '$env/dynamic/private';
 
 const register = async (
 	userName: string
 ): Promise<Either<AuthenticationError | UserError, User>> => {
-	const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+	const apiBaseUrl = env.VITE_API_BASE_URL;
 	const response = await fetch(`${apiBaseUrl}/skullking/register`, {
 		method: 'POST',
 		headers: {
